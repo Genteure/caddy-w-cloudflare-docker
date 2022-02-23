@@ -1,4 +1,4 @@
-name: 'Build on Master'
+name: 'Build Caddy'
 
 on:
   workflow_dispatch:
@@ -26,9 +26,13 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ github.token }}
+      - id: lowercase-repo-name
+        uses: ASzc/change-string-case-action@v1
+        with:
+          string: ${{ github.repository }}
       - name: Build container image
         uses: docker/build-push-action@v2
         with:
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           push: true
-          tags: ghcr.io/${{ github.repository }}:latest
+          tags: ghcr.io/${{ steps.lowercase-repo-name.outputs.lowercase }}:latest
